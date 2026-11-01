@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -48,7 +48,7 @@ model Comment {
 }
 
 model Like {
-  id     BigInt    @id @default(sequence())
+  id     BigInt    @id @default(autoincrement())
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
