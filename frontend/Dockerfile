@@ -1,12 +1,19 @@
-FROM node:20 AS build
+FROM node:18.16.0-slim
+
 WORKDIR /app
-COPY package*.json ./ 
+
+ENV NODE_ENV=production
+
+COPY package*.json ./
+
 RUN npm install
+
 COPY . .
+
 RUN npm run build
-FROM nginx:alpine 
-COPY --from=build /app/dist /usr/share/nginx/html
 
+RUN npm install -g serve
 
+EXPOSE 4173
 
- 
+CMD ["serve", "-s", "dist", "-l", "4173"]
