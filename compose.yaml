@@ -25,10 +25,14 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        VITE_BACKEND_SERVER_PROD: http://localhost:5000
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     ports:
-      - "4173:4173"
+      - "4173:5173"
     depends_on:
       - backend
 
