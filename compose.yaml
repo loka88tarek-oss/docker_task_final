@@ -1,9 +1,9 @@
 services:
   database:
-    build: ./database
+    image: postgres:16
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env from .env.example first}
       POSTGRES_DB: blogdb
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -12,29 +12,26 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./backend/uploads:/app/uploads
     environment:
       PORT: 5000
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@database:5432/blogdb
-      TOKEN_SECRET: ${TOKEN_SECRET}
+      TOKEN_SECRET: ${TOKEN_SECRET:?Create .env from .env.example first}
 
+    volumes:
+      - uploads:/app/uploads
     depends_on:
       - database
 
   frontend:
     build:
       context: ./frontend
-    command: npm run dev -- --host 0.0.0.0 --port 5173
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      CHOKIDAR_USEPOLLING: "true"
+      args:
+        VITE_API_URL: http://localhost:5000
     ports:
-      - "4173:5173"
+      - "4173:4173"
     depends_on:
       - backend
 
 volumes:
   postgres_data:
+  uploads:
